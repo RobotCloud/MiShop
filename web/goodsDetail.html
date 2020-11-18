@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>商品详情页</title>
+    <link type="text/css" href="css/show.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script>
+        function addCart(goodsId) {
+            $.ajax({
+                url: "cartServlet?method=addGoodsToCart&goodsId=" + goodsId,
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.code === 200) { // 成功
+                        $("#hint").html(data.message).slideDown(500).delay(1500).slideUp(500)
+                    } else if (data.code === -2) { // 未登录
+                        window.location.href = "login.html"
+                    } else { // 失败
+                        $("#hint").html(data.message).slideDown(500).delay(1500).slideUp(500)
+                    }
+                }
+            })
+        }
+
+        $(function () {
+            $(".header").load("header.html")
+            $(".footer").load("footer.html")
+
+            $.ajax({
+                url: "goodsServlet?method=queryGoodsDetail&goodsId=" + getQueryVariable("goodsId"),
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data != null) {
+                        $("#box").append($("<h3>产品名称:<small>" + data.name + "</small></h3>\n" +
+                            "<div style=\"margin-left: 10px;\">\n" +
+                            "    <p>市场价格:&nbsp;&nbsp;&nbsp;" +
+                            "        <span class=\"text-danger\" style=\"font-size: 15px;\">" + data.price + "</span>&nbsp;&nbsp;&nbsp;" +
+                            "        <span class=\"glyphicon glyphicon-yen\"></span>" +
+                            "    </p>" +
+                            "    <p>上市时间:&nbsp;&nbsp;&nbsp;" + data.time + "</p>\n" +
+                            "    <p>热销指数:&nbsp;&nbsp;&nbsp;\n" +
+                            "       <img src=\"image/star_red.gif\" alt=\"star\"/>\n" +
+                            "    </p>" +
+                            "    <p>详细介绍:</p>" +
+                            "    <p>&nbsp;&nbsp;" + data.info + "</p>\n" +
+                            "    <span class=\"btn btn-warning\" onclick=\"addCart(" + data.id + ")\">加入购物车&nbsp;&nbsp;&nbsp;" +
+                            "        <span class=\"glyphicon glyphicon-shopping-cart\"></span>" +
+                            "    </span>&nbsp;&nbsp;&nbsp;\n" +
+                            "        <button class=\"btn btn-danger\">直接购买</button>" +
+                            "</div>"))
+
+                        $("#img-box").append($("<a href=\"#\" class=\"thumbnail\">\n" +
+                            "                <img src=\"" + data.image + "\" width=\"560\" height=\"560\"\n" +
+                            "                     alt=\"\"/>\n" +
+                            "            </a>"))
+                    } else {
+
+                    }
+                }
+            })
+
+            // 获取url参数
+            function getQueryVariable(variable) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return pair[1];
+                    }
+                }
+                // return(false);
+            }
+
+        })
+    </script>
+</head>
+<body>
+<div class="header"></div>
+<div style="margin: 0 auto;width: 90%;">
+    <ol class="breadcrumb">
+        <li><a href="#">小米商城</a></li>
+        <li><a href="#">手机</a></li>
+        <li class="active"><a href="getGoodsListByTypeId?typeid=${goods.typeid}">商品类型名</a></li>
+    </ol>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-6 col-md-6" id="img-box">
+
+        </div>
+        <div class="col-xs-6 col-md-6">
+            <div class="panel panel-default" style="height: 560px">
+                <div class="panel-heading">商品详情</div>
+                <div class="panel-body" id="box">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="alert alert-danger" id="hint" role="alert"></div>
+<!-- 底部 -->
+<div class="footer"></div>
+</body>
+</html>

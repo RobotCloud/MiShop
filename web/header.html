@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>头部</title>
+    <link rel="stylesheet" type="text/css" href="css/login2.css">
+    <link rel="stylesheet" type="text/css" href="css/show.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            // 查询所有的商品类型，显示在头部
+            $.ajax({
+                url: "goodsServlet?method=queryAllTypes",
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    for (let i in data) {
+                        let types = $("<a>" + data[i].name + "</a>");
+                        types.attr("class", "types")
+                        types.attr("id", "types" + data[i].id)
+                        types.click(function () {
+                            location.href = "goodsList.html?typeId=" + data[i].id
+                        })
+                        $("#goodsType").append(types);
+                    }
+                },
+                error: function () {
+                    //alert("失败");
+                }
+            })
+
+            // 检查用户是否登录
+            $.ajax({
+                url: "userServlet?method=checkLogin",
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.code === 200) { // 已登录
+                        $("#login-show").css("display", "block")
+                        $("#not-login-show").css("display", "none")
+                        $("#user").html(data.object1.username)
+                    } else { // 未登录
+                        $("#login-show").css("display", "none")
+                        $("#not-login-show").css("display", "block")
+                    }
+                }
+            })
+
+            $("#cart").click(function () {
+                $.ajax({
+                    url: "userServlet?method=checkLogin",
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        console.log(data)
+                        if (data !== null) {
+                            window.location.href = "cart.html"
+                        } else {
+                            window.location.href = "http://localhost:8080/login.html"
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+
+<div id="top">
+    <div id="topdiv">
+            <span>
+                <a href="index.html" class="a_top" target="_blank">小米商城</a>
+                <li>|</li>
+                <a href="" class="a_top">小米商城移动版</a>
+                <li>|</li>
+                <a href="" class="a_top">问题反馈</a>
+            </span>
+
+        <span style="float:right">
+           		<div id="not-login-show">
+                    <a href="login.html" class="a_top">登录</a>
+                    <li>|</li>
+                    <a href="register.html" class="a_top">注册</a>
+                </div>
+       			<div id="login-show">
+                    <a href="self_info.html" class="a_top" id="user"></a>
+                    <li>|</li>
+                    <a href="userServlet?method=logout" class="a_top" id="logout">注销</a>
+                    <li>|</li>
+                    <a href="orderList.html" class="a_top">我的订单</a>
+                    <li>|</li>
+                    <a href="self_info.html?method=getAddress" class="a_top">地址管理</a>
+                    <li>|</li>
+                    <a href="" class="a_top">消息通知</a>
+                    <a href="#" id="cart">购物车</a>
+                </div>
+            </span>
+    </div>
+</div>
+<div id="second">
+    <a href="" class="seimg" style=" margin-top:23px;"><img id="logo" src="image/logo_top.png" width="55" height="54"/></a>
+    <a href="" class="seimg" style=" margin-top:17px;"><img id="gif" src="image/yyymix.gif" width="180"
+                                                            height="66"/></a>
+    <p id="goodsType">
+        <!-- 根据ajax 回调函数 填写数据 到此id中 -->
+
+    </p>
+    <form class="form-inline pull-right" style="margin-top: 40px;margin-right: 10px;">
+
+        <div class="form-group">
+            <input type="text" class="form-control" style="width: 400px" placeholder="搜索一下好东西...">
+        </div>
+        <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;搜索
+        </button>
+    </form>
+</div>
+</body>
+</html>

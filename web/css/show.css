@@ -1,0 +1,32 @@
+﻿#login-show {
+    display: none;
+}
+
+#not-login-show {
+    display: block;
+}
+
+.types {
+    line-height: 100px;
+    font-size: 18px;
+    color: #000;
+    font-family: "微软雅黑";
+    float: left;
+    margin-left: 15px;
+}
+
+.types:hover {
+    color: #F00;
+    cursor: pointer;
+}
+
+#hint {
+    width: 300px;
+    position: fixed;
+    text-align: center;
+    font-size: 20px;
+    top: 0;
+    left: 50%;
+    margin-left: -150px;
+    display: none;
+}

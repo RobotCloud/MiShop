@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>生成订单成功</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="css/show.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/login2.css">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".header").load("header.html")
+            $(".footer").load("footer.html")
+
+            $.ajax({
+                url: "orderServlet?method=queryOrder&orderId=" + getUrlParam("orderId"),
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.code === 200) {
+                        $("#orderId").html("订单号:" + data.object1.id)
+                        $("#orderCount").html("订单总金额:" + data.object1.count)
+                    } else if (data.code === -2) {
+                        window.location.href = "login.html";
+                    } else {
+                        $("#hint").html(data.message).slideDown(500).delay(1500).slideUp(500)
+                    }
+                }
+            })
+        })
+
+        // 获取url参数
+        function getUrlParam(variable) {
+            let query = window.location.search.substring(1);
+            let vars = query.split("?");
+            for (let i = 0; i < vars.length; i++) {
+                let pair = vars[i].split("=");
+                if (pair[0] === variable) {
+                    return pair[1];
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="header"></div>
+
+<div class="container">
+    <hr>
+    <div class="row" style="width: 30%;margin: 0 auto;padding-top: 20px">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">订单提示</h3>
+            </div>
+            <div class="panel-body">
+                <h3 class="text-default"><span class="glyphicon glyphicon-ok-sign"></span>&nbsp;&nbsp;&nbsp;&nbsp;订单添加成功!!
+                </h3>
+                <hr>
+                <h4 id="orderId"></h4>
+                <h4 id="orderCount"></h4>
+                <span class="h2">立即支付</span>
+                <a href="pay.jsp?oid=${order.id }&omoney=${order.money }"
+                   class="btn btn-warning">易宝支付</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="payWeixin.jsp?oid=${order.id }"
+                   class="btn btn-success">微信支付</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="alert alert-danger" id="hint" role="alert"></div>
+<div class="footer"></div>
+</body>
+</html>

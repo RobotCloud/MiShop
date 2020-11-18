@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>商品列表页</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $(".header").load("header.html")
+            $(".footer").load("footer.html")
+
+            $.ajax({
+                url: "goodsServlet?method=queryAllGoodsByTypeId&typeId=" + getQueryVariable("typeId"),
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.length > 0) {
+                        data.forEach(function (item) {
+                            console.log(item)
+                            $("#box").append($("<div class=\"col-sm-3\">" +
+                                "<div class=\"thumbnail\">" +
+                                "<img src=\"" + item.image + "\" width=\"180\" height=\"180\" alt=\"小米6\"/>\n" +
+                                "<div class=\"caption\">\n" +
+                                "     <h4>商品名称<a href=\"goodsDetail.html?goodsId=" + item.id + "\">" + item.name + "</a></h4>\n" +
+                                "     <p>热销指数<img src=\"image/star_red.gif\" alt=\"star\"/></p>\n" +
+                                "     <p>上架日期:" + item.time + "</p>\n" +
+                                "     <p style=\"color:orange\">价格:" + item.price + "</p>\n" +
+                                "</div>" +
+                                "</div>" +
+                                "</div>"))
+                        })
+                    }
+                }
+            })
+
+            // 获取url参数
+            function getQueryVariable(variable) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return pair[1];
+                    }
+                }
+                // return(false);
+            }
+        })
+    </script>
+</head>
+<body>
+<div class="header"></div>
+<div class="panel panel-default" style="margin: 0 auto;width: 95%;">
+    <div class="panel-heading">
+        <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"></span>&nbsp;&nbsp;商品列表</h3>
+    </div>
+    <div class="panel-body">
+        <!--列表开始-->
+        <div class="row" id="box" style="margin: 0 auto;">
+
+
+        </div>
+        <!--        分页-->
+        <div class="pager ">
+            <a href="">首页</a>
+            <a href="">下一页</a>
+            <li class="active"><a href="#">1<span class="sr-only">(current)</span></a></li>
+            <li><a href="goodsController?method=getGoodsByTypeId&amp;typeId=1&amp;nowPage=2&amp;pageSize=5">2</a></li>
+            <li><a href="goodsController?method=getGoodsByTypeId&amp;typeId=1&amp;nowPage=3&amp;pageSize=5">3</a></li>
+            <a href="goodsController?method=getGoodsByTypeId&amp;nowPage=3&amp;typeId=1">末页</a>
+        </div>
+    </div>
+</div>
+<div class="footer"></div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>订单预览页面</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="css/show.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            $(".header").load("header.html")
+            $(".footer").load("footer.html")
+
+            $.ajax({
+                url: "orderServlet?method=queryCurrentOrderList",
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    if (data.code === 200) {
+                        let totalMoney = 0;
+                        // 购物车商品
+                        data.object1.forEach(function (item, index) {
+                            totalMoney = totalMoney + item.count;
+                            $("#table").append(
+                                $("<tr>" +
+                                    "<th>" + (index + 1) + "</th>" +
+                                    "<th>" + item.goods.name + "</th>" +
+                                    "<th>" + item.goods.price + "</th>" +
+                                    "<th width=\"100px\">" +
+                                    "</span>" +
+                                    "<span>" + item.num + "</span>" +
+                                    "</th>" +
+                                    "<th>" + item.count + "</th>" +
+                                    "</tr>"))
+                        })
+                        // 地址
+                        $("#table").append($("<tr>\n" +
+                            "                    <td colspan=\"5\">\n" +
+                            "                        <h5>收货地址</h5>\n" +
+                            "<select id=\"address\" style=\"width:60%\" class=\"form-control\">\n" +
+                            "</select>" +
+                            "                    </td>\n" +
+                            "                </tr>"))
+                        data.object2.forEach(function (item) {
+                            $("#address").append($("<option value=\"" + item.aid + "\">" + item.name + "&nbsp;&nbsp;" + item.phone + "&nbsp;&nbsp;" + item.detail + "</option>\n"))
+                        })
+                        // 总价
+                        $("#total").html(totalMoney)
+                    } else if (data.code === -1) {
+                        $("#table").append("<tr>" +
+                            "<td colspan='5'>订单空空如也，快去添加商品吧</td>" +
+                            "</tr>").css("text-align", "center")
+                    } else if (data.code === -2) {
+                        window.location.href = "login.html";
+                    } else {
+                        $("#hint").html(data.message).slideDown(500).delay(1500).slideUp(500)
+                    }
+                },
+            })
+            // 提交订单
+            $("#btn_add").click(function () {
+                let $aid = $("#address").find("option:selected").val();
+                // 创建订单
+                $.ajax({
+                    url: "orderServlet?method=addAndQueryOrder&aid=" + $aid,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (data) {
+                        if (data.code === 200) {
+                            // 跳转到订单添加成功页面
+                            window.location.href = "orderSuccess.html?orderId=" + data.object1.id;
+                        } else if (data.code === -2) {
+                            window.location.href = "login.html";
+                        } else {
+                            $("#hint").html(data.message).slideDown(500).delay(1500).slideUp(500)
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body style="background-color:#f5f5f5">
+<div class="header"></div>
+<div class="container" style="background-color: white;">
+    <div class="row" style="margin-left: 40px">
+        <h3>订单预览<small>温馨提示：请添加你要邮递到的地址</small></h3>
+    </div>
+    <div class="row" style="margin-top: 40px;">
+        <div class="col-md-10 col-md-offset-1">
+            <table class="table table-bordered table-striped table-hover" id="table">
+                <tr>
+                    <th>序号</th>
+                    <th>商品名称</th>
+                    <th>价格</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div style="margin-left: 40px;">
+            <h4>商品金额总计：<span id="total" class="text-danger"><b> </b></span></h4>
+        </div>
+    </div>
+    <div class="row pull-right" style="margin-right: 40px;">
+        <div style="margin-bottom: 20px;">
+            <button id="btn_add" class="btn  btn-danger btn-lg" type="button">提交订单</button>
+        </div>
+    </div>
+</div>
+<div class="alert alert-danger" id="hint" role="alert"></div>
+<div class="footer"></div>
+</body>
+</html>
