@@ -4,7 +4,7 @@ JavaWeb项目
 
 jdk1.8 + mysql 8.0.20 + Tomcat 8.5.54
 
-前后端分离：Servlet+jdbc+dbutils+html+jquery
+前后端分离：Servlet + jdbc + dbutils + html + jquery +ajax
 
 
 ## 待完成的功能
