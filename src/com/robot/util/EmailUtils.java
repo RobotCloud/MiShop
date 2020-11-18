@@ -15,7 +15,7 @@ import java.util.Properties;
  */
 public class EmailUtils {
     public static void sendEmail(String title, String content, String receiveAccount) {
-        String myAccount = "2602341707@qq.com";
+        String myAccount = "@qq.com";
         //发件人 邮箱的 SMTP 服务器地址
         String SMTPHost = "smtp.qq.com";//qq
         Properties prop = new Properties();
@@ -55,7 +55,7 @@ public class EmailUtils {
             // 4.利用Transport 发送邮件
             Transport tran = session.getTransport();
             // 连接服务器 确认发送方是否授权
-            tran.connect(myAccount, "gzcjxmztzcljeabg");
+            tran.connect(myAccount, "");
             // 发送邮件 将message 对象 传给 Transport 对象 将邮件发送出去
             // 参数1 要发的内容 参数2 要给哪些人发
             //message.getAllRecipients() 获取到所有的收件人 | 抄送 | 密送
